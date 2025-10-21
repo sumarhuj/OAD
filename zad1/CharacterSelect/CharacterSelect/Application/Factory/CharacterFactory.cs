@@ -13,6 +13,10 @@ public static class CharacterFactory
             CharacterClass.Warrior => new Warrior(name ?? "Warrior"),
             CharacterClass.Mage    => new Mage(name ?? "Mage"),
             CharacterClass.Rogue   => new Rogue(name ?? "Rogue"),
+            CharacterClass.Necro   => new Necro(name ?? "Necro"),
+            CharacterClass.Barb   => new Barb(name ?? "Barb"),
+            CharacterClass.Knight   => new Knight(name ?? "Knight"),
+            
             _ => throw new ArgumentOutOfRangeException(nameof(cls), "Nieznana klasa postaci.")
         };
     }
