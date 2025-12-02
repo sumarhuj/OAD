@@ -1,0 +1,72 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string inputPath = "ranking_raw.txt";
+        string outputPath = "ranking_clean.txt";
+
+        // Wczytanie wszystkich linii
+        List<string> lines = new List<string>(File.ReadAllLines(inputPath));
+
+        if (lines.Count == 0)
+        {
+            Console.WriteLine("Plik jest pusty!");
+            return;
+        }
+
+        List<string> clean = new List<string>();
+
+        // Dodaj nagłówek bez zmian
+        clean.Add(lines[0]);
+
+        // Przetwarzanie każdego wyniku (od drugiej linii)
+        for (int i = 1; i < lines.Count; i++)
+        {
+            string line = lines[i].Trim();
+
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            string[] fields = line.Split(';');
+
+            // Walidacja liczby pól
+            if (fields.Length != 5)
+                continue;
+
+            string nick = fields[0];
+            string czas = fields[1];
+            string punktyRaw = fields[2];
+            string status = fields[3];
+            string opis = fields[4];
+
+            // Sprawdzenie punktów
+            if (!int.TryParse(punktyRaw, out int punkty))
+                punkty = 0;
+
+            // Detekcja hakerów
+            bool hacker =
+                status.ToUpper() == "HACKER" ||
+                czas == "00:00:01" ||
+                czas == "0:00:01";
+
+            if (hacker)
+                continue;
+
+            // Odbudowanie poprawionej linii
+            string newLine = $"{nick};{czas};{punkty};{status};{opis}";
+            clean.Add(newLine);
+        }
+
+        // Zapis nowego rankingu
+        File.WriteAllLines(outputPath, clean);
+
+        // Wyświetlenie wyniku
+        Console.WriteLine("=== NOWY RANKING ===");
+        foreach (var l in File.ReadAllLines(outputPath))
+            Console.WriteLine(l);
+    }
+}
